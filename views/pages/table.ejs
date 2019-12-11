@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+   <%- include('../partials/header'); %>
+</head>
+
+<body>
+  <%- include('../partials/nav'); %>
+
+    <div class="container">
+      <h2>Latest Results</h2>
+
+      <div class="table-responsive">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Endpoint ID</th>
+              <th>Endpoint Name</th>
+              <th>Latitude</th>
+              <th>Longitude</th>
+              <th>Acc.</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% results.slice().reverse().forEach(function(r) { %>
+              <tr>
+                <td>
+                  <a href="https://cdn.emnify.net/#/endpoints/<%= r.endpoint_id %>"><%= r.endpoint_id %> <span class="glyphicon glyphicon-new-window
+"></span></a>
+                </td>
+                <td>
+                  <%= r.endpoint_name %>
+                </td>
+                <td>
+                  <%= r.lat %>
+                </td>
+                <td>
+                  <%= r.long %>
+                </td>
+                <td>
+                  <%= r.accuracy %>
+                </td>
+                <td>
+                  <%= r.timestamp %>
+                </td>
+              </tr>
+              <% }); %>
+                <!-- Instead of a table here, put these coords into a JSON object -->
+          </tbody>
+        </table>
+      </div>
+
+      <ul>
+
+      </ul>
+
+    </div>
+
+</body>
+
+</html>

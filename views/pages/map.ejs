@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <%- include('../partials/header'); %>
+</head>
+<body>
+  <%- include('../partials/nav'); %>
+    <div class="container">
+      <div id="content">
+        <style>        
+          #map {
+            height: 400px;
+            /* The height is 400 pixels */
+            width: 100%;
+            /* The width is the width of the web page */
+          }
+        </style>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="page-header-title">
+                <h2 class="heading-title text-center">Endpoints</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="map" style="width:100%; height:650px"></div>
+        <div id="button-panel">
+          <button type="button" class="btn btn-info" onclick="toggleHeatmap()">Toggle Heatmap</button>
+          <button type="button" class="btn btn-info" onclick="toggleLines()">Toggle Lines</button>
+        </div>
+        <script>
+          var endpoints = [
+            <% results.slice().reverse().forEach(function(r, idx, array) { %> {
+              "id": "<%= r.id %>",
+              "timestamp": "<%= r.timestamp %>",
+              "endpoint_id": <%= r.endpoint_id %>,
+              "endpoint_name": "<%= r.endpoint_name %>",
+              "latitude": <%= r.lat %>,
+              "longitude": <%= r.long %>
+            }
+            <% if (idx != array.length - 1){%>, <%}%>
+            <% }); %>
+          ]
+
+          var map, heatmap, linesPath;
+          var markers = [];
+          function initMap() {
+            var bounds = new google.maps.LatLngBounds(),
+              mapOptions = {
+                mapTypeId: 'roadmap',
+                 styles: [{"featureType":"water","elementType":"geometry","stylers":[{"visibility":"on"},{"color":"#aee2e0"}]},{"featureType":"landscape","elementType":"geometry.fill","stylers":[{"color":"#abce83"}]},{"featureType":"poi","elementType":"geometry.fill","stylers":[{"color":"#769E72"}]},{"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#7B8758"}]},{"featureType":"poi","elementType":"labels.text.stroke","stylers":[{"color":"#EBF4A4"}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"visibility":"simplified"},{"color":"#8dab68"}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#5B5B3F"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"color":"#ABCE83"}]},{"featureType":"road","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#A4C67D"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#9BBF72"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#EBF4A4"}]},{"featureType":"transit","stylers":[{"visibility":"off"}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"visibility":"on"},{"color":"#87ae79"}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#7f2200"},{"visibility":"off"}]},{"featureType":"administrative","elementType":"labels.text.stroke","stylers":[{"color":"#ffffff"},{"visibility":"on"},{"weight":4.1}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#495421"}]},{"featureType":"administrative.neighborhood","elementType":"labels","stylers":[{"visibility":"off"}]}],
+                zoom: 12,
+                center: {
+                  lat: 52.520,
+                  lng: 13.410
+                }
+              };
+
+            // Display a map on the page
+            map = new google.maps.Map(document.getElementById("map"), mapOptions);
+            map.setTilt(45);
+            var infowindows = [];
+            
+            for (var i = 0; i < endpoints.length; i++) {
+              var position = new google.maps.LatLng(endpoints[i].latitude, endpoints[i].longitude);
+              bounds.extend(position);
+              markers[i] = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: endpoints[i].business
+              });
+
+              var contentString = `<div id="content">
+                          <div id="siteNotice">
+                          </div>
+                          <h1 id="firstHeading" class="firstHeading">${endpoints[i].endpoint_name}</h1>
+                          <div id="bodyContent">
+                          <table class="table table-striped table-sm">
+                          <thead>
+                          <tr>
+                            <th>Timestamp</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                          </tr>
+                          </thead>
+                          <tbody>      
+                            <tr>
+                            <td>
+                            ${endpoints[i].timestamp}
+                            </td>
+                            <td>
+                            ${endpoints[i].latitude}
+                            </td>
+                            <td>
+                            ${endpoints[i].longitude}
+                            </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                           <p><a href="https://cdn.emnify.net/#/endpoints/${endpoints[i].endpoint_id}" target="_blank">View in EMnify Portal</a></p>
+                          </div>
+                          </div>`;
+
+              infowindows[i] = new google.maps.InfoWindow({
+                content: contentString
+              });
+
+              heatmap = new google.maps.visualization.HeatmapLayer({
+                data: getPoints(),
+                map: null,
+                radius: 20,
+                opacity: 0.5
+              });
+
+              linesPath = new google.maps.Polyline({
+                path: getLines(),
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+                map: null
+              });
+            }
+
+            var openwindow = null
+              // Iterate the markers array
+            markers.forEach(function(marker, index) {
+              // Set up a click event listener for each marker in the array
+              marker.addListener('click', function() {
+                if (openwindow) {
+                  openwindow.close();
+                }
+                openwindow = infowindows[index]
+                infowindows[index].open(map, marker);
+              });
+            });
+
+            // Override our map zoom level once our fitBounds function runs (Make sure it only runs once)
+            var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+              this.setZoom(12);
+              google.maps.event.removeListener(boundsListener);
+            });
+
+            
+          }
+
+        function toggleMarkers(map) {
+          for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+          }
+        }
+
+        function toggleHeatmap() {
+          heatmap.setMap(heatmap.getMap() ? null : map);
+          toggleMarkers(heatmap.getMap() ? null : map);
+        }
+
+        function getLines() {
+          var linesCoordinates = [
+            <% results.slice().reverse().forEach(function(r, idx, array) { %> 
+              { lat: <%= r.lat %>, lng: <%= r.long %> }<% if (idx != array.length - 1){%>, <%}%>
+            <% }); %>
+          ]
+          return linesCoordinates
+        }
+
+        function toggleLines() {
+          linesPath.setMap(linesPath.getMap() ? null : map);
+        }
+        
+
+
+        function getPoints() {
+          heatmapArr = [
+          <% results.slice().reverse().forEach(function(r, idx, array) { %> 
+              new google.maps.LatLng(<%= r.lat %>, <%= r.long %>)
+            <% if (idx != array.length - 1){%>, <%}%>
+            <% }); %>
+          ]
+          console.log(heatmapArr)
+          return heatmapArr;
+        }
+
+
+        </script>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=<%- process.env.API_KEY %>&libraries=visualization&callback=initMap" async defer></script>
+
+        <ul>
+
+        </ul>
+
+      </div>
+
+</body>
+
+</html>
