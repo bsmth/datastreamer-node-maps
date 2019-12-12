@@ -34,9 +34,6 @@ Provision a Postgres DB:
 $ heroku addons:create heroku-postgresql:hobby-dev
 ----
 
-> Note: As part of the provisioning process, a `DATABASE_URL` config var is added to the Heroku app’s configuration.
-To use this DB from a local instance, use dotenv as detailed in the 'Development' section below.
-
 Make a note of the DB addon name:
 
 [source,bash]
@@ -44,14 +41,10 @@ Make a note of the DB addon name:
 $ heroku pg:info
 ----
 
-The DB addon name is shown at the bottom of the output of this command in the format `postgresql-<random_name>`:
+The addon name is shown at the bottom in the format `postgresql-<random_name>`:
 
 [source,bash]
 ----
-=== DATABASE_URL
-Plan:                  Hobby-dev
-Status:                Available
-Connections:           0/20
 ...
 Add-on:                postgresql-<random_name>
 ----
