@@ -1,0 +1,67 @@
+= Datastreamer Maps Example
+
+A node.js application using a Rest API data streamer to update an embedded map with location data.
+
+*Prerequisites:*
+
+* https://nodejs.org/en/[node.js]
+* https://devcenter.heroku.com/articles/heroku-cli[Heroku CLI]
+* https://console.cloud.google.com/apis/credentials[Google Maps API Keys]
+
+== Getting Started
+
+From the project root, create a Heroku app:
+
+[source,bash]
+----
+heroku create
+----
+
+Set environment variables for the Google Maps geolookup calls:
+
+[source,bash]
+----
+heroku config:set API_KEY=<my_google_maps_api_key>
+----
+
+Deploy to Heroku and confirm the application is running:
+
+[source,bash]
+----
+git push heroku master
+heroku logs --tail
+----
+
+
+
+== Streaming Platform Data
+
+1. Navigate to the EUI https://cdn.emnify.net/eui/#/tech_settings[tech settings] page
+2. Click *+ Add Data Stream*
+3. Select *Usage Data & Events* for Data Stream Type and *RestAPI* for API Type
+4. Click the 'cog' settings button to add a new API URL
+5. Enter the app URL (e.g. `https://<my_app_url>.herokuapp.com`) and click *+*
+6. Select the new URL from the list of available API URLs
+7. Click *Add Data Stream*
+
+If the connection is working as expected, a `200` success code will be shown in the EUI for that stream when new events occur.
+
+== Development
+
+Create a file named `.env` in the project root which contains credentials in the following format:
+
+> The .env file should not be committed to git history as it contains your app secrets!
+
+[source,bash]
+----
+API_KEY=<my_google_maps_api_key>
+DB_URL=postgres://<username>:<long-password>@<server_ip>.eu-west-1.compute.amazonaws.com:<port>/<app>
+----
+
+Run locally using:
+
+[source,bash]
+----
+npm install
+node index.js
+----
