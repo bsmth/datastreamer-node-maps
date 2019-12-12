@@ -2,6 +2,8 @@
 
 A node.js application using a Rest API data streamer to update an embedded map with location data.
 
+image::doc/node-maps-example.png[]
+
 *Prerequisites:*
 
 * https://nodejs.org/en/[node.js]
