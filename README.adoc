@@ -89,7 +89,7 @@ $ ./post-pdp.sh
 
 If configured correctly, your application should show a single test entry on the map.
 
-> To permanently reset the DB, run `heroku pg:reset postgresql-<addon_name> --confirm <hroku_app_name>`. This can also be done in the browser at https://dashboard.heroku.com/apps/<app_name>/resources
+image::doc/maps-example.png[]
 
 == Streaming Platform Data
 
@@ -129,6 +129,9 @@ Run locally using:
 $ npm install
 $ node index.js
 ----
+
+> To permanently reset the DB, run `heroku pg:reset postgresql-<addon_name> --confirm <hroku_app_name>`. This can also be done in the browser at https://dashboard.heroku.com/apps/<app_name>/resources
+
 
 === Templates
 
