@@ -19,6 +19,19 @@ From the project root, create a Heroku app:
 heroku create
 ----
 
+Provision a Postgres DB:
+
+[source,bash]
+----
+# create
+heroku addons:create heroku-postgresql:hobby-dev
+# verify
+heroku pg:info
+----
+
+> Note: As part of the provisioning process, a `DATABASE_URL` config var is added to the Heroku app’s configuration.
+To use this DB from a local instance, use dotenv as detailed in the 'Development' section below.
+
 Set environment variables for the Google Maps geolookup calls:
 
 [source,bash]
@@ -30,10 +43,11 @@ Deploy to Heroku and confirm the application is running:
 
 [source,bash]
 ----
+# Deploy current Master
 git push heroku master
+# Get application logs
 heroku logs --tail
 ----
-
 
 
 == Streaming Platform Data
@@ -50,15 +64,22 @@ If the connection is working as expected, a `200` success code will be shown in 
 
 == Development
 
-Create a file named `.env` in the project root which contains credentials in the following format:
+The `DATABASE_URL` value can be found using the following command (after `Connection URL:`):
 
-> The .env file should not be committed to git history as it contains your app secrets!
+[source,bash]
+----
+heroku pg:credentials:url
+----
+
+Create a file named `.env` in the project root which contains the Maps API and Postgres credentials in the following format:
 
 [source,bash]
 ----
 API_KEY=<my_google_maps_api_key>
-DB_URL=postgres://<username>:<long-password>@<server_ip>.eu-west-1.compute.amazonaws.com:<port>/<app>
+DATABASE_URL=postgres://<username>:<long-password>@<server_ip>.eu-west-1.compute.amazonaws.com:<port>/<app>
 ----
+
+> The .env file should not be committed to git history as it contains your app secrets!
 
 Run locally using:
 
@@ -67,3 +88,21 @@ Run locally using:
 npm install
 node index.js
 ----
+
+=== Templates
+
+The project uses the EJS templating engine. For the main application pages, the templates can be found in `./views/pages`
+
+
+=== Helper Functions
+
+The main application logic is located in the `index.js` file. Some helper functions are added to the `helpers.js` and are exported for use elsewhere.
+
+== Resources
+
+* https://devcenter.heroku.com/articles/getting-started-with-nodejs[Getting tarted with Node.js on Heroku]
+* https://devcenter.heroku.com/articles/heroku-postgresql#provisioning-heroku-postgres[Deploying Postgres on Heroku]
+* https://ejs.co/[EJS Templating Reference]
+* https://developers.google.com/maps/documentation/javascript/adding-a-google-map[Google Maps Javascript Examples]
+
+
