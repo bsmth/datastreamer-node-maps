@@ -87,7 +87,16 @@ Edit the `post-pdp.sh` script to have contain your application server URL and ru
 $ ./post-pdp.sh
 ----
 
-If configured correctly, your application should show a single test entry on the map.
+Running `heroku pg:info` should list one Table and at least one Row after running the `post-pdp.sh` script
+
+[source,bash]
+----
+...
+Tables:                1
+Rows:                  20/10000 (In compliance)
+----
+
+Your application will now show test entries on the map page:
 
 image::doc/maps-example.png[]
 
