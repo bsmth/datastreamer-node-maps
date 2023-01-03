@@ -1,15 +1,31 @@
-name: "Bug report"
+name: "Issue report"
 description: Report an unexpected problem or unintended behavior.
 labels: ["needs triage"]
 body:
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before posting an issue, please confirm
+      description: You may select more than one.
+      options:
+        - label: Issue can be reproduced on this repository following [quick-start instructions](https://github.com/mdn/django-locallibrary-tutorial#quick-start).
+          validations:
+            required: true
+        - label: I am using a clean/fresh database
+          validations:
+            required: true
+        - label: I have included output logs and information about my environment setup below.
+          validations:
+            required: true
   - type: markdown
     attributes:
       value: |
         ### Before you start
 
-        **Want to fix the problem yourself?** MDN Web Docs projects are open source and we accept fixes and improvements from the community!
+        **Want to fix the problem yourself?** This project is open source and we welcome fixes and improvements from the community!
 
         ↩ Check the project [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) guide to see how to get started.
+
         ---
   - type: textarea
     id: problem
@@ -32,4 +48,4 @@ body:
     id: more-info
     attributes:
       label: Do you have anything more you want to share?
-      description: For example, steps to reproduce a bug, screenshots, screen recordings, or sample code
+      description: For example, steps to reproduce, screenshots, screen recordings, or sample code.
