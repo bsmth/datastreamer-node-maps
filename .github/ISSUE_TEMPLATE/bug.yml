@@ -2,6 +2,12 @@ name: "Issue report"
 description: Report an unexpected problem or unintended behavior.
 labels: ["needs triage"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        **Want to fix the problem yourself?** This project is open source and we welcome fixes and improvements from the community!
+
+        ↩ Check the project [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) guide to see how to get started.
   - type: checkboxes
     id: checklist
     attributes:
@@ -14,13 +20,6 @@ body:
           required: true
         - label: I have included output logs and information about my environment setup below.
           required: true
-  - type: markdown
-    attributes:
-      value: |
-        **Want to fix the problem yourself?** This project is open source and we welcome fixes and improvements from the community!
-
-        ↩ Check the project [CONTRIBUTING.md](../blob/main/CONTRIBUTING.md) guide to see how to get started.
-
   - type: textarea
     id: problem
     attributes:
@@ -40,7 +39,7 @@ body:
       description: |
         Share any logs that describe the problem you are seeing. If you are seeing an error, please include the full error message.
       placeholder: |
-        You can paste the crash logs in plain text or upload it as an attachment.
+        You can paste the output directly or upload it as an attachment.
   - type: textarea
     id: more-info
     attributes:
