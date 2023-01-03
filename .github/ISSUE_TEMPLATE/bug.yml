@@ -4,19 +4,15 @@ labels: ["needs triage"]
 body:
   - type: checkboxes
     id: checklist
+    validations:
+      required: true
     attributes:
       label: Before posting an issue, please confirm
       description: You may select more than one.
       options:
         - label: Issue can be reproduced on this repository following [quick-start instructions](https://github.com/mdn/django-locallibrary-tutorial#quick-start).
-          validations:
-            required: true
         - label: I am using a clean/fresh database
-          validations:
-            required: true
         - label: I have included output logs and information about my environment setup below.
-          validations:
-            required: true
   - type: markdown
     attributes:
       value: |
